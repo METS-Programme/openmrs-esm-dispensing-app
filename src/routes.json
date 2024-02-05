@@ -1,30 +1,35 @@
 {
-  "backendDependencies": {
-    "fhir2": "^1.2.0",
-    "webservices.rest": "^2.2.0"
-  },
-  "pages": [
-    {
-      "component": "dispensing",
-      "route": "dispensing",
-      "online": true,
-      "offline": true
-    }
-  ],
-  "extensions": [
-    {
-      "name": "dispensing-link",
-      "slot": "app-menu-slot",
-      "component": "dispensingLink",
-      "online": true,
-      "offline": true
+    "backendDependencies": {
+        "fhir2": "^1.2.0",
+        "webservices.rest": "^2.2.0"
     },
-    {
-      "name": "dispensing-dashboard",
-      "slot": "dispensing-dashboard-slot",
-      "component": "dispensingDashboard",
-      "online": true,
-      "offline": true
-    }
-  ]
+    "pages": [{
+        "component": "dispensing",
+        "route": "dispensing",
+        "online": true,
+        "offline": true
+    }],
+    "extensions": [{
+            "name": "dispensing-link",
+            "slot": "app-menu-slot",
+            "component": "dispensingLink",
+            "online": true,
+            "offline": true
+        },
+        {
+            "name": "dispensing-dashboard",
+            "slot": "dispensing-dashboard-slot",
+            "component": "dispensingDashboard",
+            "online": true,
+            "offline": true
+        },
+        {
+            "name": "dispensing-app-menu-item",
+            "component": "dispensingAppMenuItem",
+            "slot": "app-menu-item-slot",
+            "meta": {
+                "name": "Dispensing"
+            }
+        }
+    ]
 }

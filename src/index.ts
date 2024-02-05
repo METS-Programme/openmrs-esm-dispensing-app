@@ -3,6 +3,7 @@ import { configSchema } from "./config-schema";
 import dispensingComponent from "./dispensing.component";
 import dispensingLinkComponent from "./dispensing-link.component";
 import dispensingDashboardComponent from "./dashboard/dispensing-dashboard.component";
+import dispensingAppMenu from "./components/dispensing-app-menu-app-item/dispensing-app-menu-app-item.component";
 
 export const importTranslation = require.context(
   "../translations",
@@ -27,6 +28,11 @@ export const dispensingLink = getSyncLifecycle(
 
 export const dispensingDashboard = getSyncLifecycle(
   dispensingDashboardComponent,
+  options
+);
+
+export const dispensingAppMenuItem = getSyncLifecycle(
+  dispensingAppMenu,
   options
 );
 
