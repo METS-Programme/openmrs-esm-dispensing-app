@@ -70,6 +70,8 @@ const MedicationDispenseReview: React.FC<MedicationDispenseReviewProps> = ({
 
   const allowEditing = config.dispenseBehavior.allowModifyingPrescription;
 
+  const allowStockAdjust = config.showBatchDropdown;
+
   useEffect(() => {
     if (orderConfigObject) {
       // sync drug route options order config
@@ -503,6 +505,18 @@ const MedicationDispenseReview: React.FC<MedicationDispenseReviewProps> = ({
           required
         />
       </div>
+
+      {allowStockAdjust && (
+        <ComboBox
+          id="batch"
+          disabled={!userCanModify || !allowEditing}
+          light={isTablet}
+          items={[]}
+          initialSelectedItem={""}
+          titleText={t("batch", "Batch")}
+          itemToString={(item) => item?.text}
+        />
+      )}
 
       <ComboBox
         id="frequency"

@@ -43,6 +43,7 @@ export const configSchema = {
       },
     },
   },
+  showBatchDropdown: true,
   dispenseBehavior: {
     allowModifyingPrescription: {
       _type: Type.Boolean,
@@ -139,6 +140,7 @@ export type PharmacyConfig = {
       enabled: boolean;
     };
   };
+  showBatchDropdown: boolean;
   refreshInterval: number;
   dispenseBehavior: {
     allowModifyingPrescription: boolean;

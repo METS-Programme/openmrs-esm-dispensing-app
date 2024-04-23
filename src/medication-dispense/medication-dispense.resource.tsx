@@ -175,3 +175,21 @@ export function initiateMedicationDispenseBody(
   }
   return medicationDispense;
 }
+
+export function useStockInventory(
+  drugUuid: string,
+  dispenseLocationUuid: string,
+  emptyBatchLocationUuid: string
+) {
+  const apiUrl = `ws/rest/v1/stockmanagement/stockiteminventory?v=default&limit=10&totalCount=true&drugUuid=${drugUuid}&groupBy=LocationStockItemBatchNo&dispenseLocationUuid=${dispenseLocationUuid}&includeStrength=1&includeConceptRefIds=1&emptyBatch=1&emptyBatchLocationUuid=${emptyBatchLocationUuid}&dispenseAtLocation=1`;
+  const { data, error, isValidating } = useSWR<{ data: any }, Error>(
+    apiUrl,
+    openmrsFetch
+  );
+  return {
+    data: data ? data.data : null,
+    isLoading: !data && !error,
+    isError: error,
+    isValidating,
+  };
+}
