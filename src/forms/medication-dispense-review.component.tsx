@@ -23,6 +23,7 @@ import { useMedicationRequest } from "../medication-request/medication-request.r
 import { PharmacyConfig } from "../config-schema";
 import {
   useOrderConfig,
+  useStockInventory,
   useSubstitutionReasonValueSet,
   useSubstitutionTypeValueSet,
 } from "../medication-dispense/medication-dispense.resource";
@@ -58,7 +59,15 @@ const MedicationDispenseReview: React.FC<MedicationDispenseReviewProps> = ({
   const [substitutionReasons, setSubstitutionReasons] = useState([]);
   const [userCanModify, setUserCanModify] = useState(false);
 
+  const [batchs, setbatchs] = useState([]);
+
   const isTablet = useLayoutType() === "tablet";
+
+  const { data, isError, isLoading, isValidating } = useStockInventory(
+    "",
+    "",
+    ""
+  );
 
   const { orderConfigObject } = useOrderConfig();
   const { substitutionTypeValueSet } = useSubstitutionTypeValueSet(

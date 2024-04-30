@@ -475,3 +475,13 @@ export interface ValueSet {
     ];
   };
 }
+
+export interface StockDeductionRequest {
+  locationUuid: string;
+  patientId: string;
+  orderId: string;
+  encounterId: string;
+  stockItemUuid: string;
+  stockBatchUuid: string;
+  quantity: number;
+}

@@ -6,6 +6,7 @@ import {
   MedicationDispenseStatus,
   MedicationRequest,
   OrderConfig,
+  StockDeductionRequest,
   ValueSet,
 } from "../types";
 
@@ -176,6 +177,50 @@ export function initiateMedicationDispenseBody(
   return medicationDispense;
 }
 
+export function StockDeductPayload(payload: any): StockDeductionRequest | null {
+  // Ensure payload is provided
+  if (!payload) {
+    console.error("Payload is required.");
+    return null;
+  }
+
+  // Destructure payload and apply type annotations
+  const {
+    locationUuid,
+    patientId,
+    orderId,
+    encounterId,
+    stockItemUuid,
+    stockBatchUuid,
+    quantity,
+  } = payload;
+
+  // Ensure required fields are provided
+  if (!locationUuid || !patientId || !stockItemUuid || !quantity) {
+    console.error("Missing required fields in the payload.");
+    return null;
+  }
+
+  // Validate quantity
+  if (typeof quantity !== "number" || quantity <= 0) {
+    console.error("Invalid quantity value.");
+    return null;
+  }
+
+  // Construct StockDeductionRequest object
+  const body: StockDeductionRequest = {
+    locationUuid,
+    patientId,
+    orderId,
+    encounterId,
+    stockItemUuid,
+    stockBatchUuid,
+    quantity,
+  };
+
+  return body;
+}
+
 export function useStockInventory(
   drugUuid: string,
   dispenseLocationUuid: string,
@@ -187,7 +232,7 @@ export function useStockInventory(
     openmrsFetch
   );
   return {
-    data: data ? data.data : null,
+    data: data ? data.data?.results : [],
     isLoading: !data && !error,
     isError: error,
     isValidating,
