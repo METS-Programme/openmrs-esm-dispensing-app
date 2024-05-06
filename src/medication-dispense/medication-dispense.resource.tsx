@@ -1,4 +1,9 @@
-import { fhirBaseUrl, openmrsFetch, Session } from "@openmrs/esm-framework";
+import {
+  fhirBaseUrl,
+  openmrsFetch,
+  restBaseUrl,
+  Session,
+} from "@openmrs/esm-framework";
 import dayjs from "dayjs";
 import useSWR from "swr";
 import {
@@ -46,6 +51,21 @@ export function saveMedicationDispense(
       "Content-Type": "application/json",
     },
     body: medicationDispense,
+  });
+}
+
+export function deductMedicationStock(
+  StockDeductPayload,
+  abortController: AbortController
+) {
+  const url = `${restBaseUrl}/stockmanagement/dispenserequest`;
+  return openmrsFetch(url, {
+    method: "POST",
+    signal: abortController.signal,
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: { dispenseItems: [StockDeductPayload] },
   });
 }
 
@@ -219,22 +239,4 @@ export function StockDeductPayload(payload: any): StockDeductionRequest | null {
   };
 
   return body;
-}
-
-export function useStockInventory(
-  drugUuid: string,
-  dispenseLocationUuid: string,
-  emptyBatchLocationUuid: string
-) {
-  const apiUrl = `ws/rest/v1/stockmanagement/stockiteminventory?v=default&limit=10&totalCount=true&drugUuid=${drugUuid}&groupBy=LocationStockItemBatchNo&dispenseLocationUuid=${dispenseLocationUuid}&includeStrength=1&includeConceptRefIds=1&emptyBatch=1&emptyBatchLocationUuid=${emptyBatchLocationUuid}&dispenseAtLocation=1`;
-  const { data, error, isValidating } = useSWR<{ data: any }, Error>(
-    apiUrl,
-    openmrsFetch
-  );
-  return {
-    data: data ? data.data?.results : [],
-    isLoading: !data && !error,
-    isError: error,
-    isValidating,
-  };
 }

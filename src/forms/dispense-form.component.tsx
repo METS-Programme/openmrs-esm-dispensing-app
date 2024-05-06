@@ -17,7 +17,11 @@ import {
   MedicationRequestBundle,
 } from "../types";
 import { PharmacyConfig } from "../config-schema";
-import { saveMedicationDispense } from "../medication-dispense/medication-dispense.resource";
+import {
+  StockDeductPayload,
+  deductMedicationStock,
+  saveMedicationDispense,
+} from "../medication-dispense/medication-dispense.resource";
 import MedicationDispenseReview from "./medication-dispense-review.component";
 import {
   computeNewFulfillerStatusAfterDispenseEvent,
@@ -96,6 +100,7 @@ const DispenseForm: React.FC<DispenseFormProps> = ({
             if (status === 201 || status === 200) {
               closeOverlay();
               revalidate(encounterUuid);
+
               showToast({
                 critical: true,
                 kind: "success",
@@ -130,7 +135,27 @@ const DispenseForm: React.FC<DispenseFormProps> = ({
             });
             setIsSubmitting(false);
           }
-        );
+        )
+        .then(() => {
+          deductMedicationStock(StockDeductPayload, new AbortController()).then(
+            (resp) => {
+              showToast({
+                critical: true,
+                kind: "success",
+                description: t("stockdeduction", "Stock deducted successfully"),
+                title: t("stockDeduction", "Stock deducted successfully"),
+              });
+            },
+            (error) => {
+              showNotification({
+                title: t("reduceStock", "Error Reducing Item stock"),
+                kind: "error",
+                critical: true,
+                description: error?.message,
+              });
+            }
+          );
+        });
     }
   };
 
