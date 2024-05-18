@@ -40,12 +40,6 @@ export interface ResourceFilterCriteria extends PagingCriteria {
   totalCount?: boolean | null;
   limit?: number | null;
 }
-
-export interface StockBatchFilter extends ResourceFilterCriteria {
-  stockItemUuid?: string | null | undefined;
-  excludeExpired?: boolean | null;
-  includeStockItemName?: "true" | "false" | "0" | "1";
-}
 export interface StockItemInventoryFilter extends ResourceFilterCriteria {
   drugUuid?: string | null;
   partyUuid?: string | null;
