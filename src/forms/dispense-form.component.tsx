@@ -35,7 +35,6 @@ import { updateMedicationRequestFulfillerStatus } from "../medication-request/me
 interface DispenseFormProps {
   medicationDispense: MedicationDispense;
   medicationRequestBundle: MedicationRequestBundle;
-  setStockItemDetails: StockDeduct;
   mode: "enter" | "edit";
   patientUuid?: string;
   encounterUuid: string;
