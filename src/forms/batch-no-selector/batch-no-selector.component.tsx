@@ -1,14 +1,13 @@
-import React, { ReactNode, useEffect, useMemo } from "react";
+import React, { ReactNode, useEffect } from "react";
 import { Control, Controller, FieldValues } from "react-hook-form";
 import { ComboBox, InlineLoading } from "@carbon/react";
-import { useStockItemBatchNos } from "./batch-no-selector.resource";
 import { ResourceRepresentation, StockBatchDTO } from "./stock-items.resource";
 import { useStockItemBatchInformationHook } from "../batch-information/batch-information.resource";
 
 interface BatchNoSelectorProps<T> {
   placeholder?: string;
   stockItemUuid: string;
-  batchUuid?: string;
+  dispenseLocation: string;
   onBatchNoChanged?: (item: StockBatchDTO) => void;
   title?: string;
   invalid?: boolean;
@@ -21,36 +20,18 @@ interface BatchNoSelectorProps<T> {
 }
 
 const BatchNoSelector = <T,>(props: BatchNoSelectorProps<T>) => {
-  const { isLoading, stockItemBatchNos } = useStockItemBatchNos(
-    props.stockItemUuid
-  );
-  const initialSelectedItem = useMemo(
-    () =>
-      stockItemBatchNos?.find(
-        (stockItem) => stockItem.uuid === props.batchUuid
-      ) ?? "",
-    [stockItemBatchNos, props.batchUuid]
-  );
-  const { items, setStockItemUuid } = useStockItemBatchInformationHook(
-    ResourceRepresentation.Default
-  );
+  const { items, setStockItemUuid, setLocationUuid, isLoading } =
+    useStockItemBatchInformationHook(ResourceRepresentation.Default);
 
   useEffect(() => {
     setStockItemUuid(props.stockItemUuid);
-  }, [props.stockItemUuid, setStockItemUuid]);
-
-  const stockItemBatchesInfo = stockItemBatchNos?.map((item) => {
-    const matchingBatch = items?.find(
-      (batch) => batch.batchNumber === item.batchNo
-    );
-    if (matchingBatch) {
-      return {
-        ...item,
-        quantity: matchingBatch.quantity ?? "",
-      };
-    }
-    return item;
-  });
+    setLocationUuid(props.dispenseLocation);
+  }, [
+    props.dispenseLocation,
+    props.stockItemUuid,
+    setLocationUuid,
+    setStockItemUuid,
+  ]);
 
   if (isLoading) return <InlineLoading status="active" />;
 
@@ -75,15 +56,15 @@ const BatchNoSelector = <T,>(props: BatchNoSelectorProps<T>) => {
             controllerName={props.controllerName}
             id={props.name}
             size={"sm"}
-            items={stockItemBatchesInfo || []}
+            items={items || []}
             onChange={(data: { selectedItem?: StockBatchDTO }) => {
-              props.onBatchNoChanged?.(data.selectedItem);
-              onChange(data.selectedItem?.uuid);
+              props.onBatchNoChanged?.(data?.selectedItem);
+              onChange(data.selectedItem?.stockItemUuid);
             }}
-            initialSelectedItem={initialSelectedItem}
+            initialSelectedItem={items[0]}
             itemToString={(s: StockBatchDTO) =>
-              s?.batchNo
-                ? `${s?.batchNo} - Expires : ${s.expiration} | Qty: ${
+              s?.batchNumber
+                ? `${s?.batchNumber} - Expires : ${s?.expiration} | Qty: ${
                     s?.quantity ?? ""
                   }  each`
                 : ""

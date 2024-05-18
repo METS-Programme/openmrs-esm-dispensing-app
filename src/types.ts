@@ -477,11 +477,12 @@ export interface ValueSet {
 }
 
 export interface StockDeductionRequest {
-  locationUuid: string;
-  patientId: string;
-  orderId: string;
-  encounterId: string;
-  stockItemUuid: string;
-  stockBatchUuid: string;
+  dispenseLocation: string;
+  patient: string;
+  order: string;
+  encounter: string;
+  stockItem: string;
+  stockBatch: string;
+  stockItemPackagingUOM: string;
   quantity: number;
 }

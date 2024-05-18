@@ -206,17 +206,17 @@ export function StockDeductPayload(payload: any): StockDeductionRequest | null {
 
   // Destructure payload and apply type annotations
   const {
-    locationUuid,
-    patientId,
-    orderId,
-    encounterId,
-    stockItemUuid,
-    stockBatchUuid,
+    dispenseLocation,
+    patient,
+    order,
+    encounter,
+    stockItem,
+    stockBatch,
     quantity,
   } = payload;
 
   // Ensure required fields are provided
-  if (!locationUuid || !patientId || !stockItemUuid || !quantity) {
+  if (!dispenseLocation || !patient || !stockItem || !quantity) {
     console.error("Missing required fields in the payload.");
     return null;
   }
@@ -229,13 +229,14 @@ export function StockDeductPayload(payload: any): StockDeductionRequest | null {
 
   // Construct StockDeductionRequest object
   const body: StockDeductionRequest = {
-    locationUuid,
-    patientId,
-    orderId,
-    encounterId,
-    stockItemUuid,
-    stockBatchUuid,
-    quantity,
+    dispenseLocation: "",
+    patient: "",
+    order: "",
+    encounter: "",
+    stockItem: "",
+    stockBatch: "",
+    stockItemPackagingUOM: "",
+    quantity: 0,
   };
 
   return body;

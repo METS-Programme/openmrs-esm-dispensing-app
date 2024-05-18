@@ -13,8 +13,8 @@ export const InventoryGroupByOptions = [
 export type InventoryGroupBy = typeof InventoryGroupByOptions[number];
 
 export interface StockBatchDTO {
-  uuid: string;
-  batchNo: string;
+  drugUuid: string;
+  batchNumber: string;
   expiration: Date;
   stockItemUuid: string;
   quantity: string;
@@ -55,9 +55,9 @@ export interface StockBatchFilter extends ResourceFilterCriteria {
   includeStockItemName?: "true" | "false" | "0" | "1";
 }
 export interface StockItemInventoryFilter extends ResourceFilterCriteria {
-  stockItemUuid?: string | null;
+  drugUuid?: string | null;
   partyUuid?: string | null;
-  locationUuid?: string | null;
+  dispenseLocationUuid?: string | null;
   includeBatchNo?: boolean | null;
   stockBatchUuid?: string | null;
   groupBy?: InventoryGroupBy | null;
@@ -66,6 +66,11 @@ export interface StockItemInventoryFilter extends ResourceFilterCriteria {
   date?: string | null;
   includeStockItemName?: "true" | "false" | "0" | "1";
   excludeExpired?: boolean | null;
+  includeStrength?: number | null;
+  includeConceptRefIds?: number | null;
+  emptyBatch?: number | null;
+  emptyBatchLocationUuid?: string | null;
+  dispenseAtLocation?: number | null;
 }
 
 export interface ResultLink {

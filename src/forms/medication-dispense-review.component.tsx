@@ -23,11 +23,13 @@ import { useMedicationRequest } from "../medication-request/medication-request.r
 import { PharmacyConfig } from "../config-schema";
 import {
   useOrderConfig,
-  useStockInventory,
   useSubstitutionReasonValueSet,
   useSubstitutionTypeValueSet,
 } from "../medication-dispense/medication-dispense.resource";
 import { PRIVILEGE_CREATE_DISPENSE_MODIFY_DETAILS } from "../constants";
+import BatchNoSelector from "./batch-no-selector/batch-no-selector.component";
+import { useForm } from "react-hook-form";
+// import BatchNoSelector from "./batch-no-selector/batch-no-selector.component";
 
 interface MedicationDispenseReviewProps {
   medicationDispense: MedicationDispense;
@@ -59,15 +61,7 @@ const MedicationDispenseReview: React.FC<MedicationDispenseReviewProps> = ({
   const [substitutionReasons, setSubstitutionReasons] = useState([]);
   const [userCanModify, setUserCanModify] = useState(false);
 
-  const [batchs, setbatchs] = useState([]);
-
   const isTablet = useLayoutType() === "tablet";
-
-  const { data, isError, isLoading, isValidating } = useStockInventory(
-    "",
-    "",
-    ""
-  );
 
   const { orderConfigObject } = useOrderConfig();
   const { substitutionTypeValueSet } = useSubstitutionTypeValueSet(
@@ -80,6 +74,8 @@ const MedicationDispenseReview: React.FC<MedicationDispenseReviewProps> = ({
   const allowEditing = config.dispenseBehavior.allowModifyingPrescription;
 
   const allowStockAdjust = config.showBatchDropdown;
+
+  const { control } = useForm();
 
   useEffect(() => {
     if (orderConfigObject) {
@@ -204,8 +200,8 @@ const MedicationDispenseReview: React.FC<MedicationDispenseReviewProps> = ({
     if (
       medicationRequest?.medicationReference?.reference &&
       medicationDispense?.medicationReference?.reference &&
-      medicationRequest.medicationReference.reference !=
-        medicationDispense.medicationReference.reference
+      medicationRequest?.medicationReference.reference !=
+        medicationDispense?.medicationReference.reference
     ) {
       setIsSubstitution(true);
       updateMedicationDispense({
@@ -231,8 +227,10 @@ const MedicationDispenseReview: React.FC<MedicationDispenseReviewProps> = ({
       });
     }
   }, [
-    medicationDispense.medicationReference,
+    medicationDispense,
+    medicationDispense?.medicationReference,
     medicationRequest?.medicationReference,
+    updateMedicationDispense,
   ]);
 
   useEffect(() => {
@@ -515,17 +513,24 @@ const MedicationDispenseReview: React.FC<MedicationDispenseReviewProps> = ({
         />
       </div>
 
-      {allowStockAdjust && (
-        <ComboBox
-          id="batch"
-          disabled={!userCanModify || !allowEditing}
-          light={isTablet}
-          items={[]}
-          initialSelectedItem={""}
-          titleText={t("batch", "Batch")}
-          itemToString={(item) => item?.text}
-        />
-      )}
+      <div className={styles.dispenseDetailsContainer}>
+        {allowStockAdjust && (
+          <BatchNoSelector
+            onBatchNoChanged={(item) => {
+              console.info("item->>", item);
+            }}
+            placeholder={"Filter..."}
+            controllerName={"batch-no"}
+            name={"stockItemBatchNo"}
+            title="BatchNo"
+            control={control}
+            stockItemUuid={
+              medicationDispense.medicationReference.reference.split("/")[1]
+            }
+            dispenseLocation={session?.sessionLocation?.uuid}
+          />
+        )}
+      </div>
 
       <ComboBox
         id="frequency"
