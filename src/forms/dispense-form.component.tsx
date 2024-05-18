@@ -247,7 +247,7 @@ const DispenseForm: React.FC<DispenseFormProps> = ({
           </FormLabel>
           {medicationDispensePayload ? (
             <MedicationDispenseReview
-              setStockItemDetails
+              setStockItemDetails={setStockItemDetails}
               medicationDispense={medicationDispensePayload}
               updateMedicationDispense={setMedicationDispensePayload}
               quantityRemaining={quantityRemaining}
