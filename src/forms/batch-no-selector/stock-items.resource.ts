@@ -12,15 +12,6 @@ export const InventoryGroupByOptions = [
 ] as const;
 export type InventoryGroupBy = typeof InventoryGroupByOptions[number];
 
-export interface StockBatchDTO {
-  drugUuid: string;
-  batchNumber: string;
-  expiration: Date;
-  stockItemUuid: string;
-  quantity: string;
-  voided: boolean;
-}
-
 export interface StockItemInventory {
   partyUuid: string;
   partyName: string;
@@ -108,24 +99,6 @@ export function toQueryParams<T extends ResourceFilterCriteria>(
     .filter((o) => o != null)
     .join("&");
   return queryParams.length > 0 ? "?" + queryParams : "";
-}
-
-// getStockBatches
-export function useStockBatches(filter: StockBatchFilter) {
-  const apiUrl = `${restBaseUrl}/stockmanagement/stockbatch${toQueryParams(
-    filter
-  )}`;
-  const { data, error, isLoading } = useSWR<
-    {
-      data: PageableResult<StockBatchDTO>;
-    },
-    Error
-  >(apiUrl, openmrsFetch);
-  return {
-    items: data?.data || <PageableResult<StockBatchDTO>>{},
-    isLoading,
-    isError: error,
-  };
 }
 
 // getStockItemInventory

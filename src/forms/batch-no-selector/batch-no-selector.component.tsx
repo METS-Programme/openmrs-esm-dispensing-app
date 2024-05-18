@@ -1,14 +1,17 @@
 import React, { ReactNode, useEffect } from "react";
 import { Control, Controller, FieldValues } from "react-hook-form";
 import { ComboBox, InlineLoading } from "@carbon/react";
-import { ResourceRepresentation, StockBatchDTO } from "./stock-items.resource";
+import {
+  ResourceRepresentation,
+  StockItemInventory,
+} from "./stock-items.resource";
 import { useStockItemBatchInformationHook } from "../batch-information/batch-information.resource";
 
 interface BatchNoSelectorProps<T> {
   placeholder?: string;
   stockItemUuid: string;
   dispenseLocation: string;
-  onBatchNoChanged?: (item: StockBatchDTO) => void;
+  onBatchNoChanged?: (item: StockItemInventory) => void;
   title?: string;
   invalid?: boolean;
   invalidText?: ReactNode;
@@ -57,12 +60,12 @@ const BatchNoSelector = <T,>(props: BatchNoSelectorProps<T>) => {
             id={props.name}
             size={"sm"}
             items={items || []}
-            onChange={(data: { selectedItem?: StockBatchDTO }) => {
+            onChange={(data: { selectedItem?: StockItemInventory }) => {
               props.onBatchNoChanged?.(data?.selectedItem);
               onChange(data.selectedItem?.stockItemUuid);
             }}
             initialSelectedItem={items[0]}
-            itemToString={(s: StockBatchDTO) =>
+            itemToString={(s: StockItemInventory) =>
               s?.batchNumber
                 ? `${s?.batchNumber} - Expires : ${s?.expiration} | Qty: ${
                     s?.quantity ?? ""
