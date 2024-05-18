@@ -21,6 +21,7 @@ export interface StockItemInventory {
   quantity: number;
   quantityUoM: string;
   expiration: Date;
+  quantityUoMUuid: string;
 }
 
 export interface PagingCriteria {

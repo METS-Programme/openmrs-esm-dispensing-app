@@ -520,9 +520,9 @@ const MedicationDispenseReview: React.FC<MedicationDispenseReviewProps> = ({
           <BatchNoSelector
             onBatchNoChanged={(item) => {
               setStockItemDetails.order = "";
-              setStockItemDetails.stockBatch = item.batchNumber;
+              setStockItemDetails.stockBatch = item.stockBatchUuid;
               setStockItemDetails.stockItem = item.stockItemUuid;
-              setStockItemDetails.stockItemPackagingUOM = "";
+              setStockItemDetails.stockItemPackagingUOM = item.quantityUoMUuid;
             }}
             placeholder={"Filter..."}
             controllerName={"batch-no"}
