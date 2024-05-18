@@ -32,12 +32,14 @@ import { useForm } from "react-hook-form";
 // import BatchNoSelector from "./batch-no-selector/batch-no-selector.component";
 
 interface MedicationDispenseReviewProps {
+  setStockItemDetails;
   medicationDispense: MedicationDispense;
   updateMedicationDispense: Function;
   quantityRemaining: number;
 }
 
 const MedicationDispenseReview: React.FC<MedicationDispenseReviewProps> = ({
+  setStockItemDetails,
   medicationDispense,
   updateMedicationDispense,
   quantityRemaining,
@@ -517,7 +519,10 @@ const MedicationDispenseReview: React.FC<MedicationDispenseReviewProps> = ({
         {allowStockAdjust && (
           <BatchNoSelector
             onBatchNoChanged={(item) => {
-              console.info("item->>", item);
+              setStockItemDetails.order = "";
+              setStockItemDetails.stockBatch = item.batchNumber;
+              setStockItemDetails.stockItem = item.stockItemUuid;
+              setStockItemDetails.stockItemPackagingUOM = "";
             }}
             placeholder={"Filter..."}
             controllerName={"batch-no"}

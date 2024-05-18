@@ -197,13 +197,14 @@ export function initiateMedicationDispenseBody(
   return medicationDispense;
 }
 
-export function StockDeductPayload(payload: any): StockDeductionRequest | null {
+export function StockDeductPayload(
+  payload: StockDeductionRequest
+): StockDeductionRequest | null {
   // Ensure payload is provided
   if (!payload) {
     console.error("Payload is required.");
     return null;
   }
-
   // Destructure payload and apply type annotations
   const {
     dispenseLocation,
@@ -213,6 +214,7 @@ export function StockDeductPayload(payload: any): StockDeductionRequest | null {
     stockItem,
     stockBatch,
     quantity,
+    stockItemPackagingUOM,
   } = payload;
 
   // Ensure required fields are provided
@@ -229,14 +231,14 @@ export function StockDeductPayload(payload: any): StockDeductionRequest | null {
 
   // Construct StockDeductionRequest object
   const body: StockDeductionRequest = {
-    dispenseLocation: "",
-    patient: "",
-    order: "",
-    encounter: "",
-    stockItem: "",
-    stockBatch: "",
-    stockItemPackagingUOM: "",
-    quantity: 0,
+    dispenseLocation: dispenseLocation,
+    patient: patient,
+    order: order,
+    encounter: encounter,
+    stockItem: stockItem,
+    stockBatch: stockBatch,
+    stockItemPackagingUOM: stockItemPackagingUOM,
+    quantity: quantity,
   };
 
   return body;

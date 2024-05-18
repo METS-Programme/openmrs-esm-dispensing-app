@@ -5,7 +5,6 @@ import {
   showNotification,
   showToast,
   useConfig,
-  useLayoutType,
   usePatient,
 } from "@openmrs/esm-framework";
 import { Button, FormLabel, InlineLoading } from "@carbon/react";
@@ -15,6 +14,8 @@ import {
   MedicationDispense,
   MedicationDispenseStatus,
   MedicationRequestBundle,
+  StockDeduct,
+  StockDeductionRequest,
 } from "../types";
 import { PharmacyConfig } from "../config-schema";
 import {
@@ -34,6 +35,7 @@ import { updateMedicationRequestFulfillerStatus } from "../medication-request/me
 interface DispenseFormProps {
   medicationDispense: MedicationDispense;
   medicationRequestBundle: MedicationRequestBundle;
+  setStockItemDetails: StockDeduct;
   mode: "enter" | "edit";
   patientUuid?: string;
   encounterUuid: string;
@@ -49,7 +51,6 @@ const DispenseForm: React.FC<DispenseFormProps> = ({
   quantityRemaining,
 }) => {
   const { t } = useTranslation();
-  const isTablet = useLayoutType() === "tablet";
   const { patient, isLoading } = usePatient(patientUuid);
   const config = useConfig() as PharmacyConfig;
 
@@ -57,11 +58,25 @@ const DispenseForm: React.FC<DispenseFormProps> = ({
   const [medicationDispensePayload, setMedicationDispensePayload] =
     useState<MedicationDispense>();
 
+  // track stockItems Details
+  const [stockItemDetails, setStockItemDetails] = useState<StockDeduct>();
+
   // whether or not the form is valid and ready to submit
   const [isValid, setIsValid] = useState(false);
 
   // to prevent duplicate submits
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // stock deduct
+  const payload: StockDeductionRequest = {
+    patient: patientUuid,
+    order: stockItemDetails?.order,
+    encounter: encounterUuid,
+    stockItem: stockItemDetails?.stockItem,
+    stockBatch: stockItemDetails?.stockBatch,
+    stockItemPackagingUOM: stockItemDetails?.stockItemPackagingUOM,
+    quantity: medicationDispensePayload?.quantity.value,
+  };
 
   // Submit medication dispense form
   const handleSubmit = () => {
@@ -137,7 +152,10 @@ const DispenseForm: React.FC<DispenseFormProps> = ({
           }
         )
         .then(() => {
-          deductMedicationStock(StockDeductPayload, new AbortController()).then(
+          deductMedicationStock(
+            StockDeductPayload(payload),
+            new AbortController()
+          ).then(
             (resp) => {
               showToast({
                 critical: true,
@@ -230,6 +248,7 @@ const DispenseForm: React.FC<DispenseFormProps> = ({
           </FormLabel>
           {medicationDispensePayload ? (
             <MedicationDispenseReview
+              setStockItemDetails
               medicationDispense={medicationDispensePayload}
               updateMedicationDispense={setMedicationDispensePayload}
               quantityRemaining={quantityRemaining}
