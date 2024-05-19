@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Medication, MedicationDispense } from "../types";
+import { Medication, MedicationDispense, StockDeduct } from "../types";
 import MedicationCard from "../components/medication-card.component";
 import { TextArea, ComboBox, Dropdown, NumberInput } from "@carbon/react";
 import {
@@ -32,14 +32,16 @@ import { useForm } from "react-hook-form";
 // import BatchNoSelector from "./batch-no-selector/batch-no-selector.component";
 
 interface MedicationDispenseReviewProps {
-  setStockItemDetails;
+  updateStockItemDetails: Function;
+  stockDetails: StockDeduct;
   medicationDispense: MedicationDispense;
   updateMedicationDispense: Function;
   quantityRemaining: number;
 }
 
 const MedicationDispenseReview: React.FC<MedicationDispenseReviewProps> = ({
-  setStockItemDetails,
+  updateStockItemDetails,
+  stockDetails,
   medicationDispense,
   updateMedicationDispense,
   quantityRemaining,
@@ -519,10 +521,13 @@ const MedicationDispenseReview: React.FC<MedicationDispenseReviewProps> = ({
         {allowStockAdjust && (
           <BatchNoSelector
             onBatchNoChanged={(item) => {
-              setStockItemDetails.order = "";
-              setStockItemDetails.stockBatch = item.stockBatchUuid;
-              setStockItemDetails.stockItem = item.stockItemUuid;
-              setStockItemDetails.stockItemPackagingUOM = item.quantityUoMUuid;
+              updateStockItemDetails({
+                ...stockDetails,
+                order: "",
+                stockBatch: item?.stockBatchUuid,
+                stockItem: item?.stockItemUuid,
+                stockItemPackagingUOM: item?.quantityUoMUuid,
+              });
             }}
             placeholder={"Filter..."}
             controllerName={"batch-no"}

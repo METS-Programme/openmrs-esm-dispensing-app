@@ -114,7 +114,6 @@ const DispenseForm: React.FC<DispenseFormProps> = ({
             if (status === 201 || status === 200) {
               closeOverlay();
               revalidate(encounterUuid);
-
               showToast({
                 critical: true,
                 kind: "success",
@@ -131,6 +130,10 @@ const DispenseForm: React.FC<DispenseFormProps> = ({
                     : "Dispense record successfully updated."
                 ),
               });
+              deductMedicationStock(
+                StockDeductPayload(payload),
+                abortController
+              );
             }
           },
           (error) => {
@@ -149,30 +152,7 @@ const DispenseForm: React.FC<DispenseFormProps> = ({
             });
             setIsSubmitting(false);
           }
-        )
-        .then(() => {
-          deductMedicationStock(
-            StockDeductPayload(payload),
-            new AbortController()
-          ).then(
-            (resp) => {
-              showToast({
-                critical: true,
-                kind: "success",
-                description: t("stockdeduction", "Stock deducted successfully"),
-                title: t("stockDeduction", "Stock deducted successfully"),
-              });
-            },
-            (error) => {
-              showNotification({
-                title: t("reduceStock", "Error Reducing Item stock"),
-                kind: "error",
-                critical: true,
-                description: error?.message,
-              });
-            }
-          );
-        });
+        );
     }
   };
 
@@ -247,10 +227,11 @@ const DispenseForm: React.FC<DispenseFormProps> = ({
           </FormLabel>
           {medicationDispensePayload ? (
             <MedicationDispenseReview
-              setStockItemDetails={setStockItemDetails}
               medicationDispense={medicationDispensePayload}
               updateMedicationDispense={setMedicationDispensePayload}
               quantityRemaining={quantityRemaining}
+              updateStockItemDetails={setStockItemDetails}
+              stockDetails={stockItemDetails}
             />
           ) : null}
         </section>

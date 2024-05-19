@@ -39,20 +39,12 @@ const BatchNoSelector = <T,>(props: BatchNoSelectorProps<T>) => {
   if (isLoading) return <InlineLoading status="active" />;
 
   return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "row",
-      }}
-    >
+    <div>
       <Controller
         name={props.controllerName}
         control={props.control}
         render={({ field: { onChange, ref } }) => (
           <ComboBox
-            style={{
-              flexGrow: "1",
-            }}
             titleText={props.title}
             name={props.name}
             control={props.control}
@@ -64,12 +56,9 @@ const BatchNoSelector = <T,>(props: BatchNoSelectorProps<T>) => {
               props.onBatchNoChanged?.(data?.selectedItem);
               onChange(data.selectedItem?.stockItemUuid);
             }}
-            initialSelectedItem={items[0]}
             itemToString={(s: StockItemInventory) =>
               s?.batchNumber
-                ? `${s?.batchNumber} - Expires : ${s?.expiration} | Qty: ${
-                    s?.quantity ?? ""
-                  }  each`
+                ? `${s?.batchNumber} | Qty: ${s?.quantity ?? ""} each`
                 : ""
             }
             placeholder={props.placeholder}
