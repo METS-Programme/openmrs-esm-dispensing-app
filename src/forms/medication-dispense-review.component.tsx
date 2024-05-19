@@ -517,31 +517,28 @@ const MedicationDispenseReview: React.FC<MedicationDispenseReviewProps> = ({
         />
       </div>
 
-      <div className={styles.dispenseDetailsContainer}>
-        {allowStockAdjust && (
-          <BatchNoSelector
-            onBatchNoChanged={(item) => {
-              updateStockItemDetails({
-                ...stockDetails,
-                order: "",
-                stockBatch: item?.stockBatchUuid,
-                stockItem: item?.stockItemUuid,
-                stockItemPackagingUOM: item?.quantityUoMUuid,
-              });
-            }}
-            placeholder={"Filter..."}
-            controllerName={"batch-no"}
-            name={"stockItemBatchNo"}
-            title="BatchNo"
-            control={control}
-            stockItemUuid={
-              medicationDispense.medicationReference.reference.split("/")[1]
-            }
-            dispenseLocation={session?.sessionLocation?.uuid}
-          />
-        )}
-      </div>
-
+      {allowStockAdjust && (
+        <BatchNoSelector
+          onBatchNoChanged={(item) => {
+            updateStockItemDetails({
+              ...stockDetails,
+              order: "",
+              stockBatch: item?.stockBatchUuid,
+              stockItem: item?.stockItemUuid,
+              stockItemPackagingUOM: item?.quantityUoMUuid,
+            });
+          }}
+          placeholder={"Filter..."}
+          controllerName={"batch-no"}
+          name={"stockItemBatchNo"}
+          title="BatchNo"
+          control={control}
+          stockItemUuid={
+            medicationDispense.medicationReference.reference.split("/")[1]
+          }
+          dispenseLocation={session?.sessionLocation?.uuid}
+        />
+      )}
       <ComboBox
         id="frequency"
         disabled={!userCanModify || !allowEditing}
