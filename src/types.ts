@@ -264,6 +264,13 @@ export interface MedicationDispense {
   };
 }
 
+export interface StockDeduct {
+  stockItem: string | null;
+  stockBatch: string | null;
+  stockItemPackagingUOM: string | null;
+  order: string | null;
+}
+
 export enum MedicationDispenseStatus {
   //in_progress = "in-progress",  NOT YET IMPLEMENTED
   on_hold = "on-hold",
@@ -474,4 +481,15 @@ export interface ValueSet {
       }
     ];
   };
+}
+
+export interface StockDeductionRequest {
+  dispenseLocation?: string;
+  patient: string;
+  order: string;
+  encounter: string;
+  stockItem: string;
+  stockBatch: string;
+  stockItemPackagingUOM: string;
+  quantity: number;
 }

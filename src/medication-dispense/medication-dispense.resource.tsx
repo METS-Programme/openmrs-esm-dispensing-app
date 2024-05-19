@@ -1,4 +1,9 @@
-import { fhirBaseUrl, openmrsFetch, Session } from "@openmrs/esm-framework";
+import {
+  fhirBaseUrl,
+  openmrsFetch,
+  restBaseUrl,
+  Session,
+} from "@openmrs/esm-framework";
 import dayjs from "dayjs";
 import useSWR from "swr";
 import {
@@ -6,6 +11,7 @@ import {
   MedicationDispenseStatus,
   MedicationRequest,
   OrderConfig,
+  StockDeductionRequest,
   ValueSet,
 } from "../types";
 
@@ -45,6 +51,21 @@ export function saveMedicationDispense(
       "Content-Type": "application/json",
     },
     body: medicationDispense,
+  });
+}
+
+export function deductMedicationStock(
+  StockDeductPayload,
+  abortController: AbortController
+) {
+  const url = `${restBaseUrl}/stockmanagement/dispenserequest`;
+  return openmrsFetch(url, {
+    method: "POST",
+    signal: abortController.signal,
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: { dispenseItems: [StockDeductPayload] },
   });
 }
 
@@ -174,4 +195,51 @@ export function initiateMedicationDispenseBody(
     };
   }
   return medicationDispense;
+}
+
+export function StockDeductPayload(
+  payload: StockDeductionRequest
+): StockDeductionRequest | null {
+  // Ensure payload is provided
+  if (!payload) {
+    console.error("Payload is required.");
+    return null;
+  }
+  // Destructure payload and apply type annotations
+  const {
+    dispenseLocation,
+    patient,
+    order,
+    encounter,
+    stockItem,
+    stockBatch,
+    quantity,
+    stockItemPackagingUOM,
+  } = payload;
+
+  // Ensure required fields are provided
+  if (!dispenseLocation || !patient || !stockItem || !quantity) {
+    console.error("Missing required fields in the payload.");
+    return null;
+  }
+
+  // Validate quantity
+  if (typeof quantity !== "number" || quantity <= 0) {
+    console.error("Invalid quantity value.");
+    return null;
+  }
+
+  // Construct StockDeductionRequest object
+  const body: StockDeductionRequest = {
+    dispenseLocation: dispenseLocation,
+    patient: patient,
+    order: order,
+    encounter: encounter,
+    stockItem: stockItem,
+    stockBatch: stockBatch,
+    stockItemPackagingUOM: stockItemPackagingUOM,
+    quantity: quantity,
+  };
+
+  return body;
 }

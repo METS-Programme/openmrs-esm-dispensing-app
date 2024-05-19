@@ -43,6 +43,11 @@ export const configSchema = {
       },
     },
   },
+  showBatchDropdown: {
+    _type: Type.Boolean,
+    _description: "Show batch number dropdown to help reduce stock",
+    _default: true,
+  },
   dispenseBehavior: {
     allowModifyingPrescription: {
       _type: Type.Boolean,
@@ -139,6 +144,7 @@ export type PharmacyConfig = {
       enabled: boolean;
     };
   };
+  showBatchDropdown: boolean;
   refreshInterval: number;
   dispenseBehavior: {
     allowModifyingPrescription: boolean;

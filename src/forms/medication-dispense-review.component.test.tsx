@@ -134,6 +134,8 @@ describe("Medication Dispense Review Component tests", () => {
         medicationDispense={medicationDispense}
         updateMedicationDispense={mockUpdate}
         quantityRemaining={30}
+        updateStockItemDetails={undefined}
+        stockDetails={undefined}
       />
     );
 

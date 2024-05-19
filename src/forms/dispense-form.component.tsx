@@ -5,7 +5,6 @@ import {
   showNotification,
   showToast,
   useConfig,
-  useLayoutType,
   usePatient,
 } from "@openmrs/esm-framework";
 import { Button, FormLabel, InlineLoading } from "@carbon/react";
@@ -15,9 +14,15 @@ import {
   MedicationDispense,
   MedicationDispenseStatus,
   MedicationRequestBundle,
+  StockDeduct,
+  StockDeductionRequest,
 } from "../types";
 import { PharmacyConfig } from "../config-schema";
-import { saveMedicationDispense } from "../medication-dispense/medication-dispense.resource";
+import {
+  StockDeductPayload,
+  deductMedicationStock,
+  saveMedicationDispense,
+} from "../medication-dispense/medication-dispense.resource";
 import MedicationDispenseReview from "./medication-dispense-review.component";
 import {
   computeNewFulfillerStatusAfterDispenseEvent,
@@ -45,7 +50,6 @@ const DispenseForm: React.FC<DispenseFormProps> = ({
   quantityRemaining,
 }) => {
   const { t } = useTranslation();
-  const isTablet = useLayoutType() === "tablet";
   const { patient, isLoading } = usePatient(patientUuid);
   const config = useConfig() as PharmacyConfig;
 
@@ -53,11 +57,25 @@ const DispenseForm: React.FC<DispenseFormProps> = ({
   const [medicationDispensePayload, setMedicationDispensePayload] =
     useState<MedicationDispense>();
 
+  // track stockItems Details
+  const [stockItemDetails, setStockItemDetails] = useState<StockDeduct>();
+
   // whether or not the form is valid and ready to submit
   const [isValid, setIsValid] = useState(false);
 
   // to prevent duplicate submits
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // stock deduct
+  const payload: StockDeductionRequest = {
+    patient: patientUuid,
+    order: stockItemDetails?.order,
+    encounter: encounterUuid,
+    stockItem: stockItemDetails?.stockItem,
+    stockBatch: stockItemDetails?.stockBatch,
+    stockItemPackagingUOM: stockItemDetails?.stockItemPackagingUOM,
+    quantity: medicationDispensePayload?.quantity.value,
+  };
 
   // Submit medication dispense form
   const handleSubmit = () => {
@@ -112,6 +130,10 @@ const DispenseForm: React.FC<DispenseFormProps> = ({
                     : "Dispense record successfully updated."
                 ),
               });
+              deductMedicationStock(
+                StockDeductPayload(payload),
+                abortController
+              );
             }
           },
           (error) => {
@@ -208,6 +230,8 @@ const DispenseForm: React.FC<DispenseFormProps> = ({
               medicationDispense={medicationDispensePayload}
               updateMedicationDispense={setMedicationDispensePayload}
               quantityRemaining={quantityRemaining}
+              updateStockItemDetails={setStockItemDetails}
+              stockDetails={stockItemDetails}
             />
           ) : null}
         </section>
